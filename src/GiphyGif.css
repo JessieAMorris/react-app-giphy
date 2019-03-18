@@ -1,0 +1,7 @@
+.fullscreen {
+  display: none;
+}
+
+.fullscreen.fullscreen-enabled {
+  display: block;
+}
