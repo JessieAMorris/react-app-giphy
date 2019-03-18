@@ -24,6 +24,10 @@ class GiphyScroller extends Component {
   }
 
   async fetchGifs() {
+    // Time limitations (i.e. broken things):
+    // - Previous searches aren't cancelled
+    // - Searches cause future request paging to go a bit crazy
+    // - Search function isn't debounced at all
     let gifs;
     if(this.state.searchTerm === "") {
       gifs = await this.fetchTrending();
