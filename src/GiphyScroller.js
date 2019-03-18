@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import GiphyGif from './GiphyGif.js';
 import axios from 'axios';
+import _ from 'lodash';
 import './GiphyScroller.css';
 
 const api = {
@@ -18,15 +19,16 @@ class GiphyScroller extends Component {
       searchTerm: "",
       gifs: [],
       hasMoreItems: true,
+      page: 0,
     };
   }
 
-  async fetchGifs(page) {
+  async fetchGifs() {
     let gifs;
     if(this.state.searchTerm === "") {
-      gifs = await this.fetchTrending(page);
+      gifs = await this.fetchTrending();
     } else {
-      gifs = await this.fetchSearch(page);
+      gifs = await this.fetchSearch();
     }
 
     let hasMoreItems = false;
@@ -38,31 +40,32 @@ class GiphyScroller extends Component {
       searchTerm: this.state.searchTerm,
       gifs: this.state.gifs.concat(gifs.data),
       hasMoreItems: hasMoreItems,
+      page: this.state.page + 1,
     });
   }
 
-  async fetchTrending(page) {
+  async fetchTrending() {
     var url = api.baseUrl + '/v1/gifs/trending';
 
     const response = await axios.get(url, {
       params: {
         api_key: api.apiKey,
         limit: api.limit,
-        offset: page * api.limit,
+        offset: this.state.page * api.limit,
       }
     });
 
     return response.data;
   }
 
-  async fetchSearch(page) {
+  async fetchSearch() {
     var url = api.baseUrl + '/v1/gifs/search';
 
     const response = await axios.get(url, {
       params: {
         api_key: api.apiKey,
         limit: api.limit,
-        offset: page * api.limit,
+        offset: this.state.page * api.limit,
         q: this.state.searchTerm,
       }
     });
@@ -78,9 +81,10 @@ class GiphyScroller extends Component {
       searchTerm: searchTerm,
       gifs: [],
       hasMoreItems: true,
+      page: 0,
     });
 
-    this.fetchGifs(0);
+    this.fetchGifs();
   }
 
   render() {
@@ -98,7 +102,6 @@ class GiphyScroller extends Component {
         <input type="search" onChange={this.searchChange.bind(this)} placeholder="Search for a Giph" />
         <InfiniteScroll
             className="GiphyScroller"
-            pageStart={-1}
             loadMore={this.fetchGifs.bind(this)}
             hasMore={this.state.hasMoreItems}
             loader={<div className="loader" key={0}>Loading ...</div>}
