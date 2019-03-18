@@ -103,7 +103,7 @@ class GiphyScroller extends Component {
 
     return (
       <div className="GiphyScrollerWrapper">
-        <input type="search" onChange={this.searchChange.bind(this)} placeholder="Search for a Giph" />
+        <input type="search" onChange={this.searchChange.bind(this)} placeholder="Search for a Gif" />
         <InfiniteScroll
             className="GiphyScroller"
             loadMore={this.fetchGifs.bind(this)}
