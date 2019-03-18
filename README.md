@@ -1,5 +1,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Limitations and TODO
+There are some limitations and issues. If I had more time on this I'd do a few things differently:
+
+* Routing would be used to handle navigation a bit more
+  * I.e. have trending be `/`, search be `/search/{term}`, gif details be `/gif/{id}`
+  * Something along those line. This would handle back buttons, work a bit better with debouncing, etc.
+* Use Redux for state storage
+* Cleanup CSS from just the basic Create React App CSS.
+* Tests
+  * Automated tests would be great for the components. I don't have a great way to do it just yet.
+
 ## Available Scripts
 
 In the project directory, you can run:
