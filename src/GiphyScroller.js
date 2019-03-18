@@ -15,12 +15,33 @@ class GiphyScroller extends Component {
     super(props);
 
     this.state = {
+      searchTerm: "",
       gifs: [],
       hasMoreItems: true,
     };
   }
 
   async fetchGifs(page) {
+    let gifs;
+    if(this.state.searchTerm === "") {
+      gifs = await this.fetchTrending(page);
+    } else {
+      gifs = await this.fetchSearch(page);
+    }
+
+    let hasMoreItems = false;
+    if(gifs.pagination.count) {
+      hasMoreItems = true;
+    }
+
+    this.setState({
+      searchTerm: this.state.searchTerm,
+      gifs: this.state.gifs.concat(gifs.data),
+      hasMoreItems: hasMoreItems,
+    });
+  }
+
+  async fetchTrending(page) {
     var url = api.baseUrl + '/v1/gifs/trending';
 
     const response = await axios.get(url, {
@@ -31,10 +52,35 @@ class GiphyScroller extends Component {
       }
     });
 
+    return response.data;
+  }
+
+  async fetchSearch(page) {
+    var url = api.baseUrl + '/v1/gifs/search';
+
+    const response = await axios.get(url, {
+      params: {
+        api_key: api.apiKey,
+        limit: api.limit,
+        offset: page * api.limit,
+        q: this.state.searchTerm,
+      }
+    });
+
+    return response.data;
+  }
+
+  searchChange(e) {
+    const ele = e.currentTarget;
+    const searchTerm = ele.value;
+
     this.setState({
-      gifs: this.state.gifs.concat(response.data.data),
+      searchTerm: searchTerm,
+      gifs: [],
       hasMoreItems: true,
     });
+
+    this.fetchGifs(0);
   }
 
   render() {
@@ -49,6 +95,7 @@ class GiphyScroller extends Component {
 
     return (
       <div className="GiphyScrollerWrapper">
+        <input type="search" onChange={this.searchChange.bind(this)} placeholder="Search for a Giph" />
         <InfiniteScroll
             className="GiphyScroller"
             pageStart={-1}
